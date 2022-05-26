@@ -60,6 +60,9 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "rofi", "-modi", "drun", "-show", "drun", NULL};
 static const char *termcmd[]  = { "alacritty", NULL };
+static const char *mpdplay[]  = { "mpc", "toggle", NULL };
+static const char *mpdnext[]  = { "mpc", "next", NULL };
+static const char *mpdprev[]  = { "mpc", "prev", NULL };
 
 #include "movestack.c"
 #include <X11/XF86keysym.h>
@@ -99,7 +102,10 @@ static Key keys[] = {
 	{ MODKEY,                       XK_s,      spawn,          {.v = dmenucmd } },
 
 	// MPDCONTROL
-	 
+	{ MODKEY,                       XK_Escape, spawn,          {.v = mpdplay } },
+	{ MODKEY,                       XK_F1,     spawn,          {.v = mpdprev } },
+	{ MODKEY,                       XK_F2,     spawn,          {.v = mpdnext } },
+
 	// TAGS
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
