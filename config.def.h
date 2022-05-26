@@ -1,25 +1,25 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx       = 4;        /* border pixel of windows */
-static const unsigned int snap           = 15;       /* snap pixel */
-static const int showbar                 = 1;        /* 0 means no bar */
-static const int topbar                  = 1;        /* 0 means bottom bar */
-static const char *fonts[]               = { "JetBrains Mono Nerd Font:pixelsize=19:antialias=true:autohint=true" };
-static const char dmenufont[]            = "monospace:size=10";
+static const unsigned int borderpx  = 4;        /* border pixel of windows */
+static const unsigned int snap      = 15;       /* snap pixel */
+static const int showbar            = 1;        /* 0 means no bar */
+static const int topbar             = 1;        /* 0 means bottom bar */
+static const char *fonts[]          = { "JetBrains Mono Nerd Font:pixelsize=19:antialias=true:autohint=true",  };
+static const char dmenufont[]       = "monospace:size=10";
 static const char col_darkPurple[]       = "#0f0f17";
-static const char col_lightDarkPurple[]  = "#171723";
-static const char col_lightPurple[]      = "#7070a2";
-static const char col_gray4[]            = "#eeeeee";
-static const char col_cyan[]             = "#314f57";
-static const char *colors[][3]           = {
+static const char col_lightDarkPurple[]       = "#171723";
+static const char col_lightPurple[]       = "#7070a2";
+static const char col_gray4[]       = "#eeeeee";
+static const char col_cyan[]        = "#314f57";
+static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray4, col_lightDarkPurple, col_darkPurple},
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5"};
+static const char *tags[] = { "1", "2", "3", "4", "5" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -29,6 +29,7 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "Minecraft Launcher", "minecraft-launcher", "Minecraft Launcher", 0, 1, },
 };
 
 /* layout(s) */
@@ -37,10 +38,12 @@ static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
+#include "layouts.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
+	{ "[]",      tile },    /* first entry is default */
 	{ "[M]",      monocle },
+	{ "#",      grid },
 };
 
 /* key definitions */
@@ -58,21 +61,23 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "rofi", "-modi", "drun", "-show", "drun", NULL};
+static const char *dmenucmd[] = {"rofi", "-mode", "drun", "-show", "drun", NULL};
 static const char *termcmd[]  = { "alacritty", NULL };
 
-#include "movestack.c"
 #include <X11/XF86keysym.h>
+#include "movestack.c"
+#include "mpdcontrol.c"
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 
-	// BAR MANIPULATION
+    // BAR MANIPULATION
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
-
+	
 	// LAYOUTS
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
+	{ MODKEY,                       XK_e,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_space,  setlayout,      {0} },
 
 	// TILING MANIPULATION
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -82,15 +87,13 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_comma,  incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_period, incnmaster,     {.i = -1 } },
 
 	// FLOATING MANIPULATION
 	{ MODKEY,                       XK_f,      togglefloating, {0} },
 
 	// QUIT
 	{ MODKEY,                       XK_q,      killclient,     {0} },
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+    { MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
 	// TERMINAL
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
@@ -99,26 +102,30 @@ static Key keys[] = {
 	{ MODKEY,                       XK_s,      spawn,          {.v = dmenucmd } },
 
 	// MPDCONTROL
-	 
+	{ MODKEY,                       XK_F1,      mpdchange,          {.i = -1} },
+	{ MODKEY,                       XK_F2,      mpdchange,          {.i = +1} },
+	{ MODKEY,                       XK_Escape,  mpdcontrol,          {0} },
+
 	// TAGS
-	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_Tab,    view,           {0} },
     TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
-
+	
 	// MEDIA
 	{0, XF86XK_AudioRaiseVolume, spawn, SHCMD("pulsemixer --change-volume +5 | kill -39 $(pidof dwmblocks)") },
 	{0, XF86XK_AudioLowerVolume, spawn, SHCMD("pulsemixer --change-volume -5 | kill -39 $(pidof dwmblocks)") },
-
 	// USELESS
-	{ ControlMask,                  XK_comma,  focusmon,       {.i = -1 } },
-	{ ControlMask,                  XK_period, focusmon,       {.i = +1 } },
-	{ ControlMask|ShiftMask,        XK_comma,  tagmon,         {.i = -1 } },
-	{ ControlMask|ShiftMask,        XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_comma,      incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_period,      incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_comma,  focusmon,       {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period, focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 };
 
 /* button definitions */
@@ -127,9 +134,9 @@ static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
-	{ ClkStatusText,        0,              Button1,        sigstatusbar,          {.i = 1} },
-	{ ClkStatusText,        0,              Button2,        sigstatusbar,          {.i = 2} },
-	{ ClkStatusText,        0,              Button3,        sigstatusbar,          {.i = 3} },
+	{ ClkStatusText,        0,              Button1,        sigstatusbar,   {.i = 1 } },
+	{ ClkStatusText,        0,              Button2,        sigstatusbar,   {.i = 2 } },
+	{ ClkStatusText,        0,              Button3,        sigstatusbar,   {.i = 3 } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },

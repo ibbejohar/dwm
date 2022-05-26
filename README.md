@@ -2,9 +2,12 @@
 
 * alwayscenter
 * attachbottom
-* blanktags
+* gridmode
 * movestack
 * notitle
 * pertag
-* smartborders
+* noborders, **ISSUE: No border shown when in floating mode**
+* blanktags
 * statuscmd
+* mpdcontrol
+* resizecorners
