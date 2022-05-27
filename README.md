@@ -8,3 +8,5 @@
 * pertag
 * smartborders
 * statuscmd
+* actualfullscreen
+* losefullscreen **bakkeby patch**

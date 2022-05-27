@@ -87,6 +87,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_comma,  incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_period, incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_e,      togglefullscr,  {0} },
 
 	// FLOATING MANIPULATION
 	{ MODKEY,                       XK_f,      togglefloating, {0} },
