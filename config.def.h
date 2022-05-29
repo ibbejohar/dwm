@@ -29,6 +29,8 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "firefox",  "Toolkit", "Picture-in-Picture",       1 << 5,       1,           -1 },
+	{ "Steam",  "Steam", "Steam",       1 << 5,       1,           -1 },
 };
 
 /* layout(s) */
@@ -61,6 +63,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "rofi", "-modi", "drun", "-show", "drun", NULL};
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *mpdplay[]  = { "mpc", "toggle", NULL };
+static const char *mpdstop[]  = { "mpc", "stop", NULL };
 static const char *mpdnext[]  = { "mpc", "next", NULL };
 static const char *mpdprev[]  = { "mpc", "prev", NULL };
 
@@ -103,9 +106,10 @@ static Key keys[] = {
 	{ MODKEY,                       XK_s,      spawn,          {.v = dmenucmd } },
 
 	// MPDCONTROL
-	{ MODKEY,                       XK_Escape, spawn,          {.v = mpdplay } },
-	{ MODKEY,                       XK_F1,     spawn,          {.v = mpdprev } },
-	{ MODKEY,                       XK_F2,     spawn,          {.v = mpdnext } },
+	{ MODKEY,                       XK_p,      spawn,          {.v = mpdplay } },
+	{ MODKEY,                       XK_o,      spawn,          {.v = mpdstop } },
+	{ MODKEY|ShiftMask,             XK_n,      spawn,          {.v = mpdprev } },
+	{ MODKEY,                       XK_n,      spawn,          {.v = mpdnext } },
 
 	// TAGS
 	{ MODKEY,                       XK_Tab,    view,           {0} },
