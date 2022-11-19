@@ -15,3 +15,4 @@
 * placedir
 * swallow
 * namedscratchpad
+* cool autostart
