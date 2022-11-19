@@ -13,3 +13,4 @@
 * smartborders
 * focusdir
 * placedir
+* swallow
