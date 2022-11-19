@@ -18,3 +18,4 @@
 * cool autostart
 * restartsig
 * restoreafterrestart
+* keychord
