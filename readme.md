@@ -8,3 +8,4 @@
 * alwayscenter
 * attachbottom
 * losefullscreen
+* pertag

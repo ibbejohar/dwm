@@ -1,26 +1,48 @@
 --- dwm.c
 +++ dwm.c
-@@ -433,7 +433,7 @@ buttonpress(XEvent *e)
- 	if (ev->window == selmon->barwin) {
- 		i = x = 0;
- 		do
--			x += TEXTW(tags[i]);
-+			x += bh;
- 		while (ev->x >= x && ++i < LENGTH(tags));
- 		if (i < LENGTH(tags)) {
- 			click = ClkTagBar;
-@@ -716,11 +716,11 @@ drawbar(Monitor *m)
+@@ -521,6 +535,7 @@ cleanupmon(Monitor *mon)
  	}
- 	x = 0;
- 	for (i = 0; i < LENGTH(tags); i++) {
--		w = TEXTW(tags[i]);
-+		w = bh;
- 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
--		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
-+		drw_text(drw, x, 0, bh, bh, 0, "", urg & 1 << i);
- 		if (occ & 1 << i)
--			drw_rect(drw, x + boxs, boxs, boxw, boxw,
-+			drw_rect(drw, x+boxw,boxw, w-boxw*2, w-boxw*2,
- 				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
- 				urg & 1 << i);
- 		x += w;
+ 	XUnmapWindow(dpy, mon->barwin);
+ 	XDestroyWindow(dpy, mon->barwin);
++	free(mon->pertag);
+ 	free(mon);
+ }
+ 
+@@ -657,6 +673,28 @@ createmon(void)
+ 	m->lt[0] = &layouts[0];
+ 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
+ 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
++	if (!(m->pertag = (Pertag *)calloc(1, sizeof(Pertag))))
++		die("fatal: could not malloc() %u bytes\n", sizeof(Pertag));
++	m->pertag->curtag = m->pertag->prevtag = 1;
++	for (i = 0; i <= LENGTH(tags); i++) {
++		/* init nmaster */
++		m->pertag->nmasters[i] = m->nmaster;
++
++		/* init mfacts */
++		m->pertag->mfacts[i] = m->mfact;
++
++		/* init layouts */
++		m->pertag->ltidxs[i][0] = m->lt[0];
++		m->pertag->ltidxs[i][1] = m->lt[1];
++		m->pertag->sellts[i] = m->sellt;
++
++		/* init showbar */
++		m->pertag->showbars[i] = m->showbar;
++
++		#if ZOOMSWAP_PATCH
++		m->pertag->prevzooms[i] = NULL;
++		#endif // ZOOMSWAP_PATCH
++	}
+ 	return m;
+ }
+ 
+@@ -1723,7 +1764,7 @@ tile(Monitor *m)
+ void
+ togglebar(const Arg *arg)
+ {
+-	selmon->showbar = !selmon->showbar;
++	selmon->showbar = selmon->pertag->showbars[selmon->pertag->curtag] = !selmon->showbar;
+ 	updatebarpos(selmon);
+ 	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
+ 	arrange(selmon);
