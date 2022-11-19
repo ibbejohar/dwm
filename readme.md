@@ -10,3 +10,4 @@
 * losefullscreen
 * pertag
 * fixborders
+* smartborders
