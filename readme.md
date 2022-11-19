@@ -7,3 +7,4 @@
 * actualfullscreen
 * alwayscenter
 * attachbottom
+* losefullscreen
