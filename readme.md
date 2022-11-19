@@ -5,3 +5,4 @@
 * barmodules
 * blanktags
 * actualfullscreen
+* alwayscenter
