@@ -17,3 +17,4 @@
 * namedscratchpad
 * cool autostart
 * restartsig
+* restoreafterrestart
