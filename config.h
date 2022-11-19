@@ -45,6 +45,7 @@ static const Rule rules[] = {
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1, 0 }, /* xev */
 	{ NULL,      NULL,     "scratchpad",   0,         1,          1,           0,        -1, 's' },
 	{ "Bitwarden", "bitwarden",     NULL,  0,         1,          0,           1,        -1, 'b' }, 
+	{ "firefox", "Toolkit", "Picture-in-Picture", 1 << 8,    1,          0,    1,        -1, 0 },
 };
 
 /* Bar rules allow you to configure what is shown where on the bar, as well as
@@ -61,7 +62,7 @@ static const Rule rules[] = {
  */
 static const BarRule barrules[] = {
 	/* monitor  bar    alignment         widthfunc              drawfunc              clickfunc           name */
-	{ -1,       0,     BAR_ALIGN_CENTER, width_status2d,     draw_status2d,     click_statuscmd, "status2d" },
+	{ -1,       0,     BAR_ALIGN_CENTER, width_status2d,     draw_status2d,          click_statuscmd, "status2d" },
 	{ -1,       0,     BAR_ALIGN_LEFT_LEFT,   width_tags,            draw_tags,            click_tags,         "tags" },
 	{ -1,       0,     BAR_ALIGN_RIGHT_RIGHT,   width_ltsymbol,        draw_ltsymbol,        click_ltsymbol,     "layout" },
 	{ -1,       0,     BAR_ALIGN_RIGHT_RIGHT, width_status2d_es,     draw_status2d_es,     click_statuscmd_es, "status2d_es" },
@@ -98,6 +99,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "rofi", "-show", "drun", NULL };
 static const char *bookcmd[] = { "bookmark", NULL };
+static const char *confcmd[] = { "conf", NULL };
 static const char *searencmd[] = { "searen", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
@@ -146,6 +148,7 @@ static Keychord keychords[] = {
 	{1, {{MODKEY,                       XK_s}},      spawn,          {.v = dmenucmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_b}},  spawn,          {.v = bookcmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_c}},  spawn,          {.v = confcmd } },
 
 	// SCRATCHPAD
 	{2, {{MODKEY,             XK_y},      {0, XK_y}}, togglescratch,  {.v = scratchpadcmd } },
