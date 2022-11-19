@@ -9,3 +9,4 @@
 * attachbottom
 * losefullscreen
 * pertag
+* fixborders
