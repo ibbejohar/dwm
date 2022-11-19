@@ -12,3 +12,4 @@
 * fixborders
 * smartborders
 * focusdir
+* placedir
