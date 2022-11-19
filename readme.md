@@ -1,3 +1,6 @@
 # DWM
 
 ## Patches
+
+* barmodules
+* blanktags

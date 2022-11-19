@@ -28,11 +28,11 @@ draw_tags(Bar *bar, BarDrawArg *a)
 
 	for (i = 0; i < LENGTH(tags); i++) {
 		invert = urg & 1 << i;
-		w = TEXTW(tags[i]);
+		w = bh;
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], invert);
+		drw_text(drw, x, 0, bh, bh, 0, "", urg & 1 << i);
 		if (occ & 1 << i)
-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
+			drw_rect(drw, x+boxw,boxw, w-boxw*2, w-boxw*2,
 				m == selmon && selmon->sel && selmon->sel->tags & 1 << i, invert);
 		x += w;
 	}
