@@ -6,3 +6,4 @@
 * blanktags
 * actualfullscreen
 * alwayscenter
+* attachbottom
