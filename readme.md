@@ -16,3 +16,4 @@
 * swallow
 * namedscratchpad
 * cool autostart
+* restartsig
