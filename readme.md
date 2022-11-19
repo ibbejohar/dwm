@@ -1,5 +1,7 @@
 # DWM
 
+![dwm](pic.png)
+
 ## Patches
 
 * barmodules
