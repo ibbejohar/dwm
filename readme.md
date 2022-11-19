@@ -4,3 +4,4 @@
 
 * barmodules
 * blanktags
+* actualfullscreen
