@@ -11,3 +11,4 @@
 * pertag
 * fixborders
 * smartborders
+* focusdir
