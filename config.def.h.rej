@@ -1,13 +1,16 @@
---- config.def.h
-+++ config.def.h
-@@ -67,6 +67,10 @@ static Key keys[] = {
- 	{ MODKEY,                       XK_b,      togglebar,      {0} },
- 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
- 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-+	{ MODKEY|ControlMask,           XK_Left,   placedir,       {.i = 0 } }, // left
-+	{ MODKEY|ControlMask,           XK_Right,  placedir,       {.i = 1 } }, // right
-+	{ MODKEY|ControlMask,           XK_Up,     placedir,       {.i = 2 } }, // up
-+	{ MODKEY|ControlMask,           XK_Down,   placedir,       {.i = 3 } }, // down
- 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
- 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
- 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+--- config.def.h	2019-02-02 12:55:28.000000000 +0000
++++ config.def.h	2020-04-26 13:51:06.713332746 +0100
+@@ -26,9 +26,10 @@ static const Rule rules[] = {
+ 	 *	WM_CLASS(STRING) = instance, class
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+-	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
++	/* class      instance    title       tags mask     isfloating   monitor    scratch key */
++	{ "Gimp",     NULL,       NULL,       0,            1,           -1,        0  },
++	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1,        0  },
++	{ NULL,       NULL,   "scratchpad",   0,            1,           -1,       's' },
+ };
+ 
+ /* layout(s) */

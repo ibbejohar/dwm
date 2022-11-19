@@ -14,3 +14,4 @@
 * focusdir
 * placedir
 * swallow
+* namedscratchpad
