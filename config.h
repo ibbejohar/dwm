@@ -162,6 +162,7 @@ static Keychord keychords[] = {
 	// MEDIA CONTROLL
 	{1, {{0, XF86XK_AudioRaiseVolume}},	spawn,	   SHCMD("pulsemixer --change-volume +5 && pulsemixer --max-volume 100 && kill -39 $(pidof dwmblocks)") },
 	{1, {{0, XF86XK_AudioLowerVolume}},	spawn,	   SHCMD("pulsemixer --change-volume -5 && kill -39 $(pidof dwmblocks)") },
+	{1, {{0, XF86XK_AudioMute}},	spawn,	   SHCMD("pulsemixer --toggle-mute && kill -39 $(pidof dwmblocks)") },
 
 	// MPD CONTROLL
 	{1, {{MODKEY,                   XK_p}},      spawn,          {.v = mpdplay } },
