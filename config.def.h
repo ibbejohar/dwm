@@ -26,7 +26,7 @@ static const char *const autostart[] = {
 	"dwmblocks", "&", NULL,
 	"nitrogen", "--restore", NULL,
 	"setxkbmap", "-option", "caps:escape_shifted_capslock", NULL,
-	"unclutter", "--timeout", "3", "&", NULL,
+	"unclutter", "-idle", "3", "&", NULL,
 	NULL /* terminate */
 };
 
