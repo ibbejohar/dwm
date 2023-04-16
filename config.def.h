@@ -101,6 +101,7 @@ static const char *dmenucmd[] = { "rofi", "-show", "drun", NULL };
 static const char *bookcmd[] = { "bookmark", NULL };
 static const char *confcmd[] = { "conf", NULL };
 static const char *searencmd[] = { "searen", NULL };
+static const char *turnoffcmd[] = { "turnoff", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
 static const char *bitwardencmd[] = {"b", "bitwarden-desktop", NULL};
@@ -149,6 +150,7 @@ static Keychord keychords[] = {
 	{2, {{MODKEY, XK_d},                {0, XK_b}},  spawn,          {.v = bookcmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_c}},  spawn,          {.v = confcmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_p}},  spawn,          {.v = turnoffcmd } },
 
 	// SCRATCHPAD
 	{2, {{MODKEY,             XK_y},      {0, XK_y}}, togglescratch,  {.v = scratchpadcmd } },
