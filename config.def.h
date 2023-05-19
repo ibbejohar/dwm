@@ -25,8 +25,8 @@ static const char *colors[][3]      = {
 static const char *const autostart[] = {
 	"dwmblocks", "&", NULL,
 	"nitrogen", "--restore", NULL,
+	"unmouse", NULL,
 	"setxkbmap", "-option", "caps:escape_shifted_capslock", NULL,
-	"unclutter", "-idle", "3", "&", NULL,
 	NULL /* terminate */
 };
 
@@ -45,6 +45,8 @@ static const Rule rules[] = {
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1, 0 }, /* xev */
 	{ NULL,      NULL,     "scratchpad",   0,         1,          1,           0,        -1, 's' },
 	{ "Bitwarden", "bitwarden",     NULL,  0,         1,          0,           1,        -1, 'b' }, 
+	{ "ncmpcpp", "ncmpcpp",     NULL,      1,         1,          0,           1,        -1, 'n' }, 
+	{ "movie", "movie",         NULL,      1,         1,          0,           1,        -1, 'm' }, 
 	{ "firefox", "Toolkit", "Picture-in-Picture", 1 << 8,    1,          0,    1,        -1, 0 },
 };
 
@@ -97,14 +99,17 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "rofi", "-show", "drun", NULL };
+static const char *dmenucmd[] = { "rofi", "-show", "drun", "-display-drun", "Search", NULL };
 static const char *bookcmd[] = { "bookmark", NULL };
 static const char *confcmd[] = { "conf", NULL };
 static const char *searencmd[] = { "searen", NULL };
+static const char *urlcmd[] = { "urlopener", NULL };
 static const char *turnoffcmd[] = { "turnoff", NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
-static const char *bitwardencmd[] = {"b", "bitwarden-desktop", NULL};
+static const char *bitwardencmd[] = {"b", "bitwarden", NULL};
+static const char *ncmpcppcmd[]  = {"n", "alacritty", "--class", "ncmpcpp", "-e", "ncmpcpp", NULL };
+static const char *moviecmd[]  = {"m", "alacritty", "--class", "movie", "-e", "movie", NULL };
 static const char *mpdplay[]  = { "mpc", "toggle", NULL };
 static const char *mpdstop[]  = { "mpc", "stop", NULL };
 static const char *mpdnext[]  = { "mpc", "next", NULL };
@@ -151,10 +156,13 @@ static Keychord keychords[] = {
 	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_c}},  spawn,          {.v = confcmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_p}},  spawn,          {.v = turnoffcmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_u}},  spawn,          {.v = urlcmd } },
 
 	// SCRATCHPAD
 	{2, {{MODKEY,             XK_y},      {0, XK_y}}, togglescratch,  {.v = scratchpadcmd } },
 	{2, {{MODKEY,             XK_y},      {0, XK_b}}, togglescratch,  {.v = bitwardencmd } },
+	{2, {{MODKEY,             XK_y},      {0, XK_n}}, togglescratch,  {.v = ncmpcppcmd } },
+	{2, {{MODKEY,             XK_y},      {0, XK_m}}, togglescratch,  {.v = moviecmd } },
 
 	// QUIT
 	{1, {{MODKEY,                       XK_q}},      killclient,     {0} },
