@@ -25,7 +25,6 @@ static const char *colors[][3]      = {
 static const char *const autostart[] = {
 	"dwmblocks", "&", NULL,
 	"nitrogen", "--restore", NULL,
-	"unmouse", NULL,
 	"setxkbmap", "-option", "caps:escape_shifted_capslock", NULL,
 	NULL /* terminate */
 };
