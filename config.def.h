@@ -23,9 +23,11 @@ static const char *colors[][3]      = {
 };
 
 static const char *const autostart[] = {
+        "walle", NULL,
 	"dwmblocks", "&", NULL,
 	"nitrogen", "--restore", NULL,
 	"setxkbmap", "-option", "caps:escape_shifted_capslock", NULL,
+        "reminder", "&", NULL,
 	NULL /* terminate */
 };
 
@@ -40,6 +42,7 @@ static const Rule rules[] = {
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor  scratch key*/
 	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1, 0 },
 	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1, 0 },
+	{ "Steam", "Steam",     NULL,          1 << 8,    1,          0,          -1,        -1, 0 },
 	{ "Alacritty", "Alacritty", NULL,      0,         0,          1,           0,        -1, 0 },
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1, 0 }, /* xev */
 	{ NULL,      NULL,     "scratchpad",   0,         1,          1,           0,        -1, 's' },
