@@ -103,6 +103,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "rofi", "-show", "drun", "-display-drun", "Search", NULL };
 static const char *bookcmd[] = { "bookmark", NULL };
+static const char *emojicmd[] = { "emoji", NULL };
 static const char *loficmd[] = { "lofi", NULL };
 static const char *searencmd[] = { "searen", NULL };
 static const char *urlcmd[] = { "urlopener", NULL };
@@ -155,6 +156,7 @@ static Keychord keychords[] = {
 	// LAUNCHER
 	{1, {{MODKEY,                       XK_s}},      spawn,          {.v = dmenucmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_b}},  spawn,          {.v = bookcmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_e}},  spawn,          {.v = emojicmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_l}},  spawn,          {.v = loficmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_p}},  spawn,          {.v = turnoffcmd } },
