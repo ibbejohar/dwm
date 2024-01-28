@@ -23,11 +23,11 @@ static const char *colors[][3]      = {
 };
 
 static const char *const autostart[] = {
-        "walle", NULL,
+    "walle", NULL,
 	"dwmblocks", "&", NULL,
-	"nitrogen", "--restore", NULL,
+	//"nitrogen", "--restore", NULL,
 	"setxkbmap", "-option", "caps:escape_shifted_capslock", NULL,
-        "reminder", "&", NULL,
+    "reminder", "&", NULL,
 	NULL /* terminate */
 };
 
@@ -101,22 +101,23 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "rofi", "-show", "drun", "-display-drun", "Search", NULL };
-static const char *bookcmd[] = { "bookmark", NULL };
-static const char *emojicmd[] = { "emoji", NULL };
-static const char *loficmd[] = { "lofi", NULL };
-static const char *searencmd[] = { "searen", NULL };
-static const char *urlcmd[] = { "urlopener", NULL };
-static const char *turnoffcmd[] = { "turnoff", NULL };
-static const char *termcmd[]  = { "alacritty", NULL };
-static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
 static const char *bitwardencmd[] = {"b", "bitwarden", NULL};
-static const char *ncmpcppcmd[]  = {"n", "alacritty", "--class", "ncmpcpp", "-e", "ncmpcpp", NULL };
+static const char *bookcmd[] = { "bookmark", NULL };
+static const char *dmenucmd[] = { "rofi", "-show", "drun", "-display-drun", "Search", NULL };
+static const char *emojicmd[] = { "emoji", NULL };
+static const char *kdramasearchcmd[] = { "kdrama_search", NULL };
+static const char *loficmd[] = { "lofi", NULL };
 static const char *moviecmd[]  = {"m", "alacritty", "--class", "movie", "-e", "movie", NULL };
-static const char *mpdplay[]  = { "mpc", "toggle", NULL };
-static const char *mpdstop[]  = { "mpc", "stop", NULL };
 static const char *mpdnext[]  = { "mpc", "next", NULL };
+static const char *mpdplay[]  = { "mpc", "toggle", NULL };
 static const char *mpdprev[]  = { "mpc", "prev", NULL };
+static const char *mpdstop[]  = { "mpc", "stop", NULL };
+static const char *ncmpcppcmd[]  = {"n", "alacritty", "--class", "ncmpcpp", "-e", "ncmpcpp", NULL };
+static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
+static const char *searencmd[] = { "searen", NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
+static const char *turnoffcmd[] = { "turnoff", NULL };
+static const char *urlcmd[] = { "urlopener", NULL };
 
 #include <X11/XF86keysym.h>
 
@@ -157,9 +158,10 @@ static Keychord keychords[] = {
 	{1, {{MODKEY,                       XK_s}},      spawn,          {.v = dmenucmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_b}},  spawn,          {.v = bookcmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_e}},  spawn,          {.v = emojicmd } },
-	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_k}},  spawn,          {.v = kdramasearchcmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_l}},  spawn,          {.v = loficmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_p}},  spawn,          {.v = turnoffcmd } },
+	{2, {{MODKEY, XK_d},                {0, XK_s}},  spawn,          {.v = searencmd } },
 	{2, {{MODKEY, XK_d},                {0, XK_u}},  spawn,          {.v = urlcmd } },
 
 	// SCRATCHPAD
