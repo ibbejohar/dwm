@@ -14,7 +14,7 @@
         pname = "dwm";
         version = "custom";
 
-        src = dwm-custom;
+        src = self;
 
         nativeBuildInputs = [
           pkgs.pkg-config
