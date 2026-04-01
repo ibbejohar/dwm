@@ -3,9 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    # Your custom dwm repo
-    dwm-custom.url = "github:ibbejohar/dwm";
   };
 
   outputs = { self, nixpkgs, dwm-custom, ... }:
