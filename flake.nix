@@ -21,14 +21,14 @@
         ];
 
         buildInputs = [
-          pkgs.xorg.libX11
+          pkgs.libX11
           pkgs.xorg.libXft
           pkgs.xorg.libXinerama
 
-          # XCB support (for your modified dwm)
-          pkgs.xorg.libxcb
+          # XCB support
+          pkgs.libxcb
           pkgs.xorg.xcbutil
-          pkgs.xorg.xcbutilwm
+          pkgs.libxcb-wm
           pkgs.xorg.xcbutilkeysyms
           pkgs.xorg.xcbutilrenderutil
 
