@@ -1,6 +1,9 @@
 ## Personal Patched Suckless DWM
 
-### First patch
+### First patch - Pertag
 
-#### Pertag
 Resize and change layout indenpendly on each tags.
+
+### Second patch - Barconfig
+
+Able to freely rearrange bar modules
