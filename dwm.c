@@ -444,7 +444,7 @@ buttonpress(XEvent *e)
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
 		do
-			x += TEXTW(tags[i]);
+			x += bh;
 		while (ev->x >= x && ++i < LENGTH(tags));
 		if (i < LENGTH(tags)) {
 			click = ClkTagBar;
@@ -793,13 +793,13 @@ drawbar(Monitor *m)
 					x -= tw;
 				}
 				for (j = 0; j < LENGTH(tags); j++) {
-					w = TEXTW(tags[j]);
+					w = bh;
 					drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << j ? SchemeSel : SchemeNorm]);
-					drw_text(drw, x, 0, w, bh, lrpad / 2, tags[j], urg & 1 << j);
+					drw_text(drw, x, 0, bh, bh, 0, "", urg & 1 << j);
 					if (occ & 1 << j)
-						drw_rect(drw, x + boxs, boxs, boxw, boxw,
+						drw_rect(drw, x+boxw,boxw, w-boxw*2, w-boxw*2,
 							m == selmon && selmon->sel && selmon->sel->tags & 1 << j,
-							urg & 1 << i);
+							urg & 1 << j);
 					x += w;
 				}
 				if (moveright)
