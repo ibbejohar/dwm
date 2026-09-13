@@ -61,3 +61,7 @@ Assign any window with unique id and able to spawn or hide/reveal with the same 
 ### Fourteenth patch - Restartsig
 
 Restart dwm
+
+### Fifteenth patch - Restoreafterrestart
+
+Restore state after restart dwm.
