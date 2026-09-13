@@ -36,7 +36,7 @@ static const Rule rules[] = {
 	{ "Firefox",  NULL,       NULL,            1 << 8,    0,          0,           0,          0,         -1,      0},
 	{ "Alacritty", "Alacritty", NULL,          0,         0,          0,           1,          0,         -1,      0},
 	{ NULL,       NULL,       "Event Tester",  0,         0,          0,           1,          0,         -1,      0}, /* xev */
-	{ NULL,       NULL,   "scratchpad",        0,         1,          0,           1,          0,         -1       's'},
+	{ NULL,       NULL,   "scratchpad",        0,         1,          0,           1,          0,         -1,       's'},
 };
 
 /* layout(s) */
