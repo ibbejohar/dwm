@@ -53,3 +53,7 @@ xcb-res
 ### Twelfth patch - Alwayscenter
 
 Spawn floating windows center of the screen.
+
+### Thirteenth patch - Namedscratchpads
+
+Assign any window with unique id and able to spawn or hide/reveal with the same key.
