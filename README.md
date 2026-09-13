@@ -36,3 +36,7 @@ Directional focus instead of moving focus by circle through windows.
 ### Ninth patch - Placedir
 
 Directional movement of windows instead of circle throught windows.
+
+### Tenth patch - Smartborders
+
+Draw only border if there is more than 1 windows or if they are floating window.
