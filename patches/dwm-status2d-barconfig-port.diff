@@ -1,0 +1,150 @@
+From d6fb12acd594a726ba879de4377019ff3dbfa22f Mon Sep 17 00:00:00 2001
+From: dwm-fix <you@example.com>
+Date: Sun, 13 Sep 2026 00:00:00 +0000
+Subject: [PATCH] Make status2d cursor/split-aware for barconfig's drawbar()
+
+drawstatusbar() previously always anchored its drawn block to the
+monitor's absolute right edge (x = m->ww - w), which only works when
+status is the single, outermost, right-flush bar element. With
+barconfig + the splitstatus port, status can be split into a centered
+segment and a right-hand segment that may sit anywhere along the
+moveright cursor (e.g. barlayout "t|ls" draws ltsymbol flush right
+and status to its left, not flush right itself).
+
+Split the old drawstatusbar() into:
+
+  - statusw(text): measures the rendered width of a status2d string,
+    skipping ^c/^b/^d/^r codes but honoring ^f offsets. Pure
+    measurement, no drawing, so callers can position before drawing.
+
+  - drawstatusbar(m, bh, text, x): draws a status2d string with its
+    left edge at the caller-supplied x and returns x + width, so
+    callers can chain positioning however they need.
+
+case 's': in drawbar() now:
+  - measures+draws the centered (mstext) segment at
+    (m->ww - w) / 2, independent of the moveright cursor, matching
+    the splitstatus port's original centering behavior.
+  - measures the right-hand (rstext) segment and draws it at the
+    current moveright cursor position (x -= w before drawing) when
+    moveright, or grows the cursor forward when not, exactly like
+    the other case blocks (l/n/t) already do -- so status2d now
+    composes correctly with other bar elements regardless of
+    barlayout order.
+
+drawbar()'s local msx is dropped (positioning is now handled inside
+the statusw()+drawstatusbar() calls).
+---
+ dwm.c | 58 ++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 32 insertions(+), 26 deletions(-)
+
+diff --git a/dwm.c b/dwm.c
+index 8cc6c7b..2d851dd 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -184,7 +184,8 @@ static void detachstack(Client *c);
+ static Monitor *dirtomon(int dir);
+ static void drawbar(Monitor *m);
+ static void drawbars(void);
+-static int drawstatusbar(Monitor *m, int bh, char* text);
++static int drawstatusbar(Monitor *m, int bh, char* text, int x);
++static int statusw(char *stext);
+ static void enternotify(XEvent *e);
+ static void expose(XEvent *e);
+ static void focus(Client *c);
+@@ -834,20 +835,14 @@ dirtomon(int dir)
+ }
+ 
+ int
+-drawstatusbar(Monitor *m, int bh, char* stext) {
+-	int ret, i, w, x, len;
++statusw(char *stext)
++{
++	int w = 0, i;
+ 	short isCode = 0;
+-	char *text;
+-	char *p;
+-
+-	len = strlen(stext) + 1 ;
+-	if (!(text = (char*) malloc(sizeof(char)*len)))
+-		die("malloc");
+-	p = text;
+-	memcpy(text, stext, len);
++	char *text = stext;
+ 
+-	/* compute width of the status text */
+-	w = 0;
++	/* compute width of the status text, skipping over ^c/^b/^d/^r codes
++	 * but accounting for ^f offsets, same measuring pass as upstream */
+ 	i = -1;
+ 	while (text[++i]) {
+ 		if (text[i] == '^') {
+@@ -867,12 +862,25 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
+ 	}
+ 	if (!isCode)
+ 		w += TEXTW(text) - lrpad;
+-	else
+-		isCode = 0;
+-	text = p;
+ 
+-	w += 2; /* 1px padding on both sides */
+-	ret = x = m->ww - w;
++	return w + 2; /* 1px padding on both sides */
++}
++
++int
++drawstatusbar(Monitor *m, int bh, char *stext, int x) {
++	int ret, i, w, len;
++	short isCode = 0;
++	char *text;
++	char *p;
++
++	len = strlen(stext) + 1 ;
++	if (!(text = (char*) malloc(sizeof(char)*len)))
++		die("malloc");
++	p = text;
++	memcpy(text, stext, len);
++
++	w = statusw(text);
++	ret = x + w;
+ 
+ 	drw_setscheme(drw, scheme[LENGTH(colors)]);
+ 	drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
+@@ -950,7 +958,6 @@ drawbar(Monitor *m)
+ 	unsigned int i, j, occ = 0, urg = 0;
+ 	Client *c;
+ 	char *mstext, *rstext, *stextdup;
+-	int msx;
+ 
+ 	if (!m->showbar)
+ 		return;
+@@ -991,20 +998,19 @@ drawbar(Monitor *m)
+ 
+ 			case 's':
+ 				if (m == selmon) { /* status is only drawn on selected monitor */
+-					drw_setscheme(drw, scheme[SchemeNorm]);
+ 					stextdup = strdup(stext);
+ 					rstext = stextdup;
+ 					if (splitstatus) {
+ 						mstext = strsep(&rstext, splitdelim);
+-						msx = (m->ww - TEXTW(mstext) + lrpad) / 2; /* x position of middle status text */
+-						drw_text(drw, msx, 0, TEXTW(mstext) - lrpad, bh, 0, mstext, 0);
++						w = statusw(mstext);
++						drawstatusbar(m, bh, mstext, (m->ww - w) / 2); /* centered */
+ 					}
+-					tw = TEXTW(rstext) - lrpad + 2; /* 2px right padding */
++					w = statusw(rstext);
+ 					if (moveright) {
+-						x -= tw;
+-						drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
++						x -= w;
++						drawstatusbar(m, bh, rstext, x);
+ 					} else
+-						x = drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
++						x = drawstatusbar(m, bh, rstext, x);
+ 					free(stextdup);
+ 				}
+ 				break;
+-- 
+2.43.0
+

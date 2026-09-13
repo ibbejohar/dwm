@@ -73,3 +73,7 @@ Able to chain multiple keybining.
 ### Seventeenth patch - Splitstatus
 
 Split status to two part. This is patched mave been modified by Claude to work for dwm6.8
+
+### Eighteenth patch - Status2d
+
+Give colors and able to draw on status. Modifed with Claude to work with the current heavly patched dwm.
