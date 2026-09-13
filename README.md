@@ -21,3 +21,6 @@ This patch is generated from Claude.
 
 Fullscreens the window instead of just disabling the dwm bar.
 
+### Sixth patch - Losefullscreen
+
+Lose fullscreen when a new window spawn.
