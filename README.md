@@ -49,3 +49,7 @@ Swallow child process spawn from terminal and hide the terminal.
 libxcb
 Xlib-libxcb
 xcb-res
+
+### Twelfth patch - Alwayscenter
+
+Spawn floating windows center of the screen.
