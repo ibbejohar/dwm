@@ -1002,6 +1002,8 @@ drawbar(Monitor *m)
 					rstext = stextdup;
 					if (splitstatus) {
 						mstext = strsep(&rstext, splitdelim);
+						if (!rstext)
+							rstext = ""; /* splitdelim wasn't present in stext */
 						w = statusw(mstext);
 						drawstatusbar(m, bh, mstext, (m->ww - w) / 2); /* centered */
 					}

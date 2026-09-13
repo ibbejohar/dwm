@@ -1,7 +1,7 @@
-From d6fb12acd594a726ba879de4377019ff3dbfa22f Mon Sep 17 00:00:00 2001
+From 453cc444adb853c8c6e65b0308a8ec25886652c7 Mon Sep 17 00:00:00 2001
 From: dwm-fix <you@example.com>
 Date: Sun, 13 Sep 2026 00:00:00 +0000
-Subject: [PATCH] Make status2d cursor/split-aware for barconfig's drawbar()
+Subject: [PATCH] Port status2d to barconfig's drawbar(), fix NULL deref crash
 
 drawstatusbar() previously always anchored its drawn block to the
 monitor's absolute right edge (x = m->ww - w), which only works when
@@ -21,25 +21,25 @@ Split the old drawstatusbar() into:
     left edge at the caller-supplied x and returns x + width, so
     callers can chain positioning however they need.
 
-case 's': in drawbar() now:
-  - measures+draws the centered (mstext) segment at
-    (m->ww - w) / 2, independent of the moveright cursor, matching
-    the splitstatus port's original centering behavior.
-  - measures the right-hand (rstext) segment and draws it at the
-    current moveright cursor position (x -= w before drawing) when
-    moveright, or grows the cursor forward when not, exactly like
-    the other case blocks (l/n/t) already do -- so status2d now
-    composes correctly with other bar elements regardless of
-    barlayout order.
+case 's': in drawbar() now measures+draws the centered (mstext)
+segment independent of the moveright cursor, and measures+draws the
+right-hand (rstext) segment at the current moveright cursor, so
+status2d composes correctly with other bar elements regardless of
+barlayout order.
 
-drawbar()'s local msx is dropped (positioning is now handled inside
-the statusw()+drawstatusbar() calls).
+Also fixes a NULL-pointer crash: strsep() sets its remainder pointer
+to NULL (not an empty string) when the delimiter isn't found in the
+input -- which happens on the very first drawbar() call at startup,
+before any status text has been set (stext starts as an empty
+string). statusw()/drawstatusbar() then dereferenced that NULL
+pointer immediately, crashing dwm on startup. rstext is now defaulted
+to an empty string when strsep leaves it NULL.
 ---
- dwm.c | 58 ++++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 32 insertions(+), 26 deletions(-)
+ dwm.c | 60 +++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 34 insertions(+), 26 deletions(-)
 
 diff --git a/dwm.c b/dwm.c
-index 8cc6c7b..2d851dd 100644
+index 8cc6c7b..82ecd81 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -184,7 +184,8 @@ static void detachstack(Client *c);
@@ -118,7 +118,7 @@ index 8cc6c7b..2d851dd 100644
  
  	if (!m->showbar)
  		return;
-@@ -991,20 +998,19 @@ drawbar(Monitor *m)
+@@ -991,20 +998,21 @@ drawbar(Monitor *m)
  
  			case 's':
  				if (m == selmon) { /* status is only drawn on selected monitor */
@@ -129,6 +129,8 @@ index 8cc6c7b..2d851dd 100644
  						mstext = strsep(&rstext, splitdelim);
 -						msx = (m->ww - TEXTW(mstext) + lrpad) / 2; /* x position of middle status text */
 -						drw_text(drw, msx, 0, TEXTW(mstext) - lrpad, bh, 0, mstext, 0);
++						if (!rstext)
++							rstext = ""; /* splitdelim wasn't present in stext */
 +						w = statusw(mstext);
 +						drawstatusbar(m, bh, mstext, (m->ww - w) / 2); /* centered */
  					}
