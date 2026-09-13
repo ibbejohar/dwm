@@ -31,4 +31,8 @@ Attach spawned windows bottom of stack instead of top of the stack.
 
 ### Eight patch - Focusdir
 
-Directional movement instead of moving focus by circle through windows.
+Directional focus instead of moving focus by circle through windows.
+
+### Ninth patch - Placedir
+
+Directional movement of windows instead of circle throught windows.
