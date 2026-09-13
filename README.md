@@ -57,3 +57,7 @@ Spawn floating windows center of the screen.
 ### Thirteenth patch - Namedscratchpads
 
 Assign any window with unique id and able to spawn or hide/reveal with the same key.
+
+### Fourteenth patch - Restartsig
+
+Restart dwm
