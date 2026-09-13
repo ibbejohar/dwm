@@ -54,7 +54,7 @@ static const Layout layouts[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask // Super
 #define TAGKEYS(KEY,TAG)                                                                                               \
        &((Keychord){1, {{MODKEY, KEY}},                                        view,           {.ui = 1 << TAG} }), \
        &((Keychord){1, {{MODKEY|ControlMask, KEY}},                            toggleview,     {.ui = 1 << TAG} }), \
@@ -65,50 +65,68 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+//static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+static const char *dmenucmd[] = { "rofi", "-show", "drun", NULL};
 static const char *termcmd[]  = { "alacritty", NULL };
 
 /*First arg only serves to match against key in rules*/
-static const char *scratchpadcmd[] = {"s", "st", "-t", "scratchpad", NULL};
+static const char *scratchpadcmd[] = {"s", "alacritty", "-t", "scratchpad", NULL};
 
 static Keychord *keychords[] = {
-	/* modifier                     key        function        argument */
-	&((Keychord){1, {{ MODKEY, XK_p}}, spawn, {.v = dmenucmd } }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_Return }}, spawn,          {.v = termcmd } }),
-	&((Keychord){1, {{ MODKEY,                       XK_grave }},  togglescratch,  {.v = scratchpadcmd } }),
-	&((Keychord){1, {{ MODKEY,                       XK_b }},      togglebar,      {0} }),
-	&((Keychord){1, {{ MODKEY,                       XK_j }},      focusstack,     {.i = +1 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_k }},      focusstack,     {.i = -1 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_Left }},   focusdir,       {.i = 0 } }), // left
-	&((Keychord){1, {{ MODKEY,                       XK_Right }},  focusdir,       {.i = 1 } }), // right
-	&((Keychord){1, {{ MODKEY,                       XK_Up }},     focusdir,       {.i = 2 } }), // up
-	&((Keychord){1, {{ MODKEY,                       XK_Down }},   focusdir,       {.i = 3 } }), // down
-	&((Keychord){1, {{ MODKEY|ControlMask,           XK_Left }},   placedir,       {.i = 0 } }), // left
-	&((Keychord){1, {{ MODKEY|ControlMask,           XK_Right }},  placedir,       {.i = 1 } }), // right
-	&((Keychord){1, {{ MODKEY|ControlMask,           XK_Up }},     placedir,       {.i = 2 } }), // up
-	&((Keychord){1, {{ MODKEY|ControlMask,           XK_Down }},   placedir,       {.i = 3 } }), // down
-	&((Keychord){1, {{ MODKEY,                       XK_i }},      incnmaster,     {.i = +1 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_d }},      incnmaster,     {.i = -1 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_h }},      setmfact,       {.f = -0.05} }),
-	&((Keychord){1, {{ MODKEY,                       XK_l }},      setmfact,       {.f = +0.05} }),
-	&((Keychord){1, {{ MODKEY,                       XK_Return }}, zoom,           {0} }),
-	&((Keychord){1, {{ MODKEY,                       XK_Tab }},    view,           {0} }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_c }},      killclient,     {0} }),
-	&((Keychord){1, {{ MODKEY,                       XK_t }},      setlayout,      {.v = &layouts[0]} }),
-	&((Keychord){1, {{ MODKEY,                       XK_f }},      setlayout,      {.v = &layouts[1]} }),
-	&((Keychord){1, {{ MODKEY,                       XK_m }},      setlayout,      {.v = &layouts[2]} }),
-	&((Keychord){1, {{ MODKEY,                       XK_space }},  setlayout,      {0} }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_space }},  togglefloating, {0} }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_f }},      togglefullscr,  {0} }),
-	&((Keychord){1, {{ MODKEY,                       XK_0 }},      view,           {.ui = ~0 } }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_0 }},      tag,            {.ui = ~0 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_comma }},  focusmon,       {.i = -1 } }),
-	&((Keychord){1, {{ MODKEY,                       XK_period }}, focusmon,       {.i = +1 } }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_comma }},  tagmon,         {.i = -1 } }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_period }}, tagmon,         {.i = +1 } }),
-	&((Keychord){1, {{ MODKEY|ShiftMask,             XK_q }},      quit,           {0} }),
-	&((Keychord){1, {{ MODKEY|ControlMask|ShiftMask, XK_q }},      quit,           {1} }), 
+	/* keychord  chain modifier            key      chainkey         function        argument */
+
+	// Spawn
+	&((Keychord){1, {{ MODKEY,             XK_s}},                   spawn,          {.v = dmenucmd } }),
+	&((Keychord){1, {{ MODKEY,             XK_Return }},             spawn,          {.v = termcmd } }),
+	
+	// Bar
+	&((Keychord){1, {{ MODKEY,             XK_b }},                  togglebar,      {0} }),
+
+	// Window
+	&((Keychord){1, {{ MODKEY,             XK_q }},                  killclient,     {0} }),
+	&((Keychord){1, {{ MODKEY,             XK_l }},                  focusdir,       {.i = 0 } }), // left
+	&((Keychord){1, {{ MODKEY,             XK_h }},                  focusdir,       {.i = 1 } }), // right
+	&((Keychord){1, {{ MODKEY,             XK_k }},                  focusdir,       {.i = 2 } }), // up
+	&((Keychord){1, {{ MODKEY,             XK_j }},                  focusdir,       {.i = 3 } }), // down
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_l }},                  placedir,       {.i = 0 } }), // left
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_h }},                  placedir,       {.i = 1 } }), // right
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_k }},                  placedir,       {.i = 2 } }), // up
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_j }},                  placedir,       {.i = 3 } }), // down
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_h }},                  setmfact,       {.f = -0.05} }),
+	&((Keychord){1, {{ MODKEY|ControlMask, XK_l }},                  setmfact,       {.f = +0.05} }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_Return }},             zoom,           {0} }),
+      //&((Keychord){1, {{ MODKEY,             XK_j }},                  focusstack,     {.i = +1 } }),
+      //&((Keychord){1, {{ MODKEY,             XK_k }},                  focusstack,     {.i = -1 } }),
+
+	// Layout
+	&((Keychord){1, {{ MODKEY,             XK_t }},                  setlayout,      {.v = &layouts[0]} }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_f }},                  setlayout,      {.v = &layouts[1]} }),
+	&((Keychord){1, {{ MODKEY,             XK_m }},                  setlayout,      {.v = &layouts[2]} }),
+	&((Keychord){1, {{ MODKEY,             XK_space }},              setlayout,      {0} }),
+	&((Keychord){1, {{ MODKEY,             XK_f }},                  togglefloating, {0} }),
+	&((Keychord){1, {{ MODKEY,             XK_e }},                  togglefullscr,  {0} }),
+	&((Keychord){1, {{ MODKEY,             XK_comma }},              incnmaster,     {.i = +1 } }),
+	&((Keychord){1, {{ MODKEY,             XK_period }},             incnmaster,     {.i = -1 } }),
+
+	// Scratchpad
+	&((Keychord){2, {{ MODKEY,             XK_a },  {0, XK_t}},      togglescratch,  {.v = scratchpadcmd } }),
+
+
+	// Monitor
+      //&((Keychord){1, {{ MODKEY,             XK_comma }},              focusmon,       {.i = -1 } }),
+      //&((Keychord){1, {{ MODKEY,             XK_period }},             focusmon,       {.i = +1 } }),
+      //&((Keychord){1, {{ MODKEY|ShiftMask,   XK_comma }},              tagmon,         {.i = -1 } }),
+      //&((Keychord){1, {{ MODKEY|ShiftMask,   XK_period }},             tagmon,         {.i = +1 } }),
+
+	// Quit and Restart
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_q }},                  quit,           {0} }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_r }},                  quit,           {1} }), // Restart
+
+	// Tags
+	&((Keychord){1, {{ MODKEY,             XK_Tab }},                view,           {0} }),
+	&((Keychord){1, {{ MODKEY,             XK_0 }},                  view,           {.ui = ~0 } }),
+	&((Keychord){1, {{ MODKEY|ShiftMask,   XK_0 }},                  tag,            {.ui = ~0 } }),
+
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
