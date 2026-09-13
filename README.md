@@ -17,3 +17,7 @@ Make tags blank and draw square if there a are any windows in the tag.
 If modules where to move from the original place the mouse click event on the modulen stop working. This fix patch fixis it.
 This patch is generated from Claude.
 
+### Fifth patch - Actualfullscreen
+
+Fullscreens the window instead of just disabling the dwm bar.
+
