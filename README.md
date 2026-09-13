@@ -28,3 +28,7 @@ Lose fullscreen when a new window spawn.
 ### Seventh patch - Attachbottom
 
 Attach spawned windows bottom of stack instead of top of the stack.
+
+### Eight patch - Focusdir
+
+Directional movement instead of moving focus by circle through windows.
