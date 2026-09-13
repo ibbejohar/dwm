@@ -1,0 +1,123 @@
+From 1070c04841f5f2eab7123f24a0f2c3d85d8840e5 Mon Sep 17 00:00:00 2001
+From: AI Claude
+Date: Sun, 13 Sep 2026 00:00:00 +0000
+Subject: [PATCH] Make buttonpress() barlayout-aware
+
+drawbar() (from the barconfig patch) draws bar elements according to
+the barlayout string, but buttonpress() still hardcoded the stock
+tags -> ltsymbol -> title -> status click regions. This made clicks
+resolve incorrectly for any barlayout other than the default order
+(e.g. clicking the layout indicator was swallowed by the status-text
+region when barlayout put 's' before 'l' on the right side).
+
+buttonpress() now walks barlayout the same way drawbar() does,
+computing each element's on-screen region (respecting the '|'
+split point and moveright direction) and matching the click against
+it. The title ('n') is left untracked, same as stock dwm: it just
+falls through to ClkWinTitle for any click that didn't land in a
+tag/ltsymbol/status region.
+
+Also fixes drawbar()'s moveright width calculation for tags, which
+still summed TEXTW(tags[j]) instead of bh after the blanktags patch
+fixed tag width to bh. Harmless while tags are left of '|', but would
+misplace neighbouring elements if tags are ever moved to the right
+side of the bar.
+---
+ dwm.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 53 insertions(+), 14 deletions(-)
+
+diff --git a/dwm.c b/dwm.c
+index cd70def..c6b2e5f 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -428,7 +428,8 @@ attachstack(Client *c)
+ void
+ buttonpress(XEvent *e)
+ {
+-	unsigned int i, x, click;
++	unsigned int i, j, x = 0, w, click;
++	int moveright = 0;
+ 	Arg arg = {0};
+ 	Client *c;
+ 	Monitor *m;
+@@ -442,18 +443,56 @@ buttonpress(XEvent *e)
+ 		focus(NULL);
+ 	}
+ 	if (ev->window == selmon->barwin) {
+-		i = x = 0;
+-		do
+-			x += bh;
+-		while (ev->x >= x && ++i < LENGTH(tags));
+-		if (i < LENGTH(tags)) {
+-			click = ClkTagBar;
+-			arg.ui = 1 << i;
+-		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
+-			click = ClkLtSymbol;
+-		else if (ev->x > selmon->ww - (int)TEXTW(stext) + lrpad - 2)
+-			click = ClkStatusText;
+-		else
++		/* walk barlayout the same way drawbar() does, so click regions
++		 * line up regardless of how the bar elements are ordered */
++		for (i = 0; i < strlen(barlayout); i++) {
++			switch (barlayout[i]) {
++			case 't':
++				w = LENGTH(tags) * bh;
++				if (moveright)
++					x -= w;
++				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w) {
++					j = (ev->x - x) / bh;
++					if (j < LENGTH(tags)) {
++						click = ClkTagBar;
++						arg.ui = 1 << j;
++					}
++				}
++				if (!moveright)
++					x += w;
++				break;
++
++			case 'l':
++				w = TEXTW(selmon->ltsymbol);
++				if (moveright)
++					x -= w;
++				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w)
++					click = ClkLtSymbol;
++				if (!moveright)
++					x += w;
++				break;
++
++			case 's':
++				w = TEXTW(stext) - lrpad + 2;
++				if (moveright)
++					x -= w;
++				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w)
++					click = ClkStatusText;
++				if (!moveright)
++					x += w;
++				break;
++
++			case '|':
++				moveright = 1;
++				x = selmon->ww;
++				break;
++
++			/* 'n' (title) is intentionally not tracked here: it fills
++			 * whatever space is left over, same as in drawbar(), so any
++			 * click that didn't land in t/l/s falls through below. */
++			}
++		}
++		if (click == ClkRootWin)
+ 			click = ClkWinTitle;
+ 	} else if ((c = wintoclient(ev->window))) {
+ 		focus(c);
+@@ -788,7 +827,7 @@ drawbar(Monitor *m)
+ 				if (moveright) {
+ 					tw = 0;
+ 					for (j = 0; j < LENGTH(tags); j++) {
+-						tw += TEXTW(tags[j]);
++						tw += bh;
+ 					}
+ 					x -= tw;
+ 				}
+-- 
+2.43.0
+

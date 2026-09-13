@@ -428,7 +428,8 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click;
+	unsigned int i, j, x = 0, w, click;
+	int moveright = 0;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -442,18 +443,56 @@ buttonpress(XEvent *e)
 		focus(NULL);
 	}
 	if (ev->window == selmon->barwin) {
-		i = x = 0;
-		do
-			x += bh;
-		while (ev->x >= x && ++i < LENGTH(tags));
-		if (i < LENGTH(tags)) {
-			click = ClkTagBar;
-			arg.ui = 1 << i;
-		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
-			click = ClkLtSymbol;
-		else if (ev->x > selmon->ww - (int)TEXTW(stext) + lrpad - 2)
-			click = ClkStatusText;
-		else
+		/* walk barlayout the same way drawbar() does, so click regions
+		 * line up regardless of how the bar elements are ordered */
+		for (i = 0; i < strlen(barlayout); i++) {
+			switch (barlayout[i]) {
+			case 't':
+				w = LENGTH(tags) * bh;
+				if (moveright)
+					x -= w;
+				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w) {
+					j = (ev->x - x) / bh;
+					if (j < LENGTH(tags)) {
+						click = ClkTagBar;
+						arg.ui = 1 << j;
+					}
+				}
+				if (!moveright)
+					x += w;
+				break;
+
+			case 'l':
+				w = TEXTW(selmon->ltsymbol);
+				if (moveright)
+					x -= w;
+				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w)
+					click = ClkLtSymbol;
+				if (!moveright)
+					x += w;
+				break;
+
+			case 's':
+				w = TEXTW(stext) - lrpad + 2;
+				if (moveright)
+					x -= w;
+				if (click == ClkRootWin && ev->x >= (int)x && ev->x < (int)x + (int)w)
+					click = ClkStatusText;
+				if (!moveright)
+					x += w;
+				break;
+
+			case '|':
+				moveright = 1;
+				x = selmon->ww;
+				break;
+
+			/* 'n' (title) is intentionally not tracked here: it fills
+			 * whatever space is left over, same as in drawbar(), so any
+			 * click that didn't land in t/l/s falls through below. */
+			}
+		}
+		if (click == ClkRootWin)
 			click = ClkWinTitle;
 	} else if ((c = wintoclient(ev->window))) {
 		focus(c);
@@ -788,7 +827,7 @@ drawbar(Monitor *m)
 				if (moveright) {
 					tw = 0;
 					for (j = 0; j < LENGTH(tags); j++) {
-						tw += TEXTW(tags[j]);
+						tw += bh;
 					}
 					x -= tw;
 				}
