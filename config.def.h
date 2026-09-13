@@ -9,6 +9,8 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int swterminheritfs    = 1;        /* 1 terminal inherits fullscreen on unswallow, 0 otherwise */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const int splitstatus        = 1;        /* 1 for split status items */
+static const char *splitdelim        = ";";       /* Character used for separating status */
 static const char *barlayout        = "t|ls";
 static const char *fonts[]          = { "Jetbrains Mono Nerd Font:size=15" };
 static const char dmenufont[]       = "monospace:size=10";

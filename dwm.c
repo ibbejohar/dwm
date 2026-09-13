@@ -840,6 +840,8 @@ drawbar(Monitor *m)
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, j, occ = 0, urg = 0;
 	Client *c;
+	char *mstext, *rstext, *stextdup;
+	int msx;
 
 	if (!m->showbar)
 		return;
@@ -881,12 +883,20 @@ drawbar(Monitor *m)
 			case 's':
 				if (m == selmon) { /* status is only drawn on selected monitor */
 					drw_setscheme(drw, scheme[SchemeNorm]);
-					tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
+					stextdup = strdup(stext);
+					rstext = stextdup;
+					if (splitstatus) {
+						mstext = strsep(&rstext, splitdelim);
+						msx = (m->ww - TEXTW(mstext) + lrpad) / 2; /* x position of middle status text */
+						drw_text(drw, msx, 0, TEXTW(mstext) - lrpad, bh, 0, mstext, 0);
+					}
+					tw = TEXTW(rstext) - lrpad + 2; /* 2px right padding */
 					if (moveright) {
 						x -= tw;
-						drw_text(drw, x, 0, tw, bh, 0, stext, 0);
+						drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
 					} else
-						x = drw_text(drw, x, 0, tw, bh, 0, stext, 0);
+						x = drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
+					free(stextdup);
 				}
 				break;
 

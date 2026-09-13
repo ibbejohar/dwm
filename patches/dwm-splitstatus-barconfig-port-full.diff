@@ -1,0 +1,83 @@
+From f39559e01eea3c21b693804dd18963f66b60d42b Mon Sep 17 00:00:00 2001
+From: dwm-fix <you@example.com>
+Date: Sun, 13 Sep 2026 00:00:00 +0000
+Subject: [PATCH] splitstatus patch, ported for barconfig-restructured dwm.c
+
+The stock splitstatus patch rewrites drawbar()'s single monolithic
+status-drawing block, which no longer exists on this tree: barconfig
+restructured drawbar() into a switch(barlayout) loop with its own
+x/moveright cursor tracking, and status drawing now lives entirely in
+case 's':.
+
+This ports the same idea (split stext on splitdelim, draw the first
+segment centered on the bar, draw the remainder right-aligned as
+before) into case 's':, preserving barlayout's moveright/x cursor
+logic for the right-hand segment. The centered segment is positioned
+absolutely (independent of the cursor), matching upstream's intent.
+
+Also frees the strdup'd buffer after use (stextdup), which the
+upstream patch never did -- drawbar() runs on every status update, so
+that leak would otherwise grow unbounded over an X session.
+
+config.def.h gains the two config knobs the ported code reads:
+
+  static const int splitstatus  = 1;
+  static const char *splitdelim = ";";
+---
+ config.def.h |  2 ++
+ dwm.c        | 16 +++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index aeaa297..ab4c6bd 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -9,6 +9,8 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
+ static const int swterminheritfs    = 1;        /* 1 terminal inherits fullscreen on unswallow, 0 otherwise */
+ static const int showbar            = 1;        /* 0 means no bar */
+ static const int topbar             = 1;        /* 0 means bottom bar */
++static const int splitstatus        = 1;        /* 1 for split status items */
++static const char *splitdelim        = ";";       /* Character used for separating status */
+ static const char *barlayout        = "t|ls";
+ static const char *fonts[]          = { "Jetbrains Mono Nerd Font:size=15" };
+ static const char dmenufont[]       = "monospace:size=10";
+diff --git a/dwm.c b/dwm.c
+index 11570fb..0fa3f05 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -840,6 +840,8 @@ drawbar(Monitor *m)
+ 	int boxw = drw->fonts->h / 6 + 2;
+ 	unsigned int i, j, occ = 0, urg = 0;
+ 	Client *c;
++	char *mstext, *rstext, *stextdup;
++	int msx;
+ 
+ 	if (!m->showbar)
+ 		return;
+@@ -881,12 +883,20 @@ drawbar(Monitor *m)
+ 			case 's':
+ 				if (m == selmon) { /* status is only drawn on selected monitor */
+ 					drw_setscheme(drw, scheme[SchemeNorm]);
+-					tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
++					stextdup = strdup(stext);
++					rstext = stextdup;
++					if (splitstatus) {
++						mstext = strsep(&rstext, splitdelim);
++						msx = (m->ww - TEXTW(mstext) + lrpad) / 2; /* x position of middle status text */
++						drw_text(drw, msx, 0, TEXTW(mstext) - lrpad, bh, 0, mstext, 0);
++					}
++					tw = TEXTW(rstext) - lrpad + 2; /* 2px right padding */
+ 					if (moveright) {
+ 						x -= tw;
+-						drw_text(drw, x, 0, tw, bh, 0, stext, 0);
++						drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
+ 					} else
+-						x = drw_text(drw, x, 0, tw, bh, 0, stext, 0);
++						x = drw_text(drw, x, 0, tw, bh, 0, rstext, 0);
++					free(stextdup);
+ 				}
+ 				break;
+ 
+-- 
+2.43.0
+

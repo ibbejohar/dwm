@@ -69,3 +69,7 @@ Restore state after restart dwm.
 ### Sixteenth patch - Keychord
 
 Able to chain multiple keybining.
+
+### Seventeenth patch - Splitstatus
+
+Split status to two part. This is patched mave been modified by Claude to work for dwm6.8
