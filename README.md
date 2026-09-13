@@ -40,3 +40,7 @@ Directional movement of windows instead of circle throught windows.
 ### Tenth patch - Smartborders
 
 Draw only border if there is more than 1 windows or if they are floating window.
+
+### Eleventh patch - Swallow
+
+Swallow child process spawn from terminal and hide the terminal. 
