@@ -1641,7 +1641,7 @@ replaceclient(Client *old, Client *new)
 		new->isfloating = f;
 
 		if (ISVISIBLE(new) && new->isfloating) {
-			resize(new, x, y, w, h, 0);
+			resize(new, x, y, w, h, bw, 0);
 		}
 	}
 
@@ -1869,7 +1869,7 @@ sendmon(Client *c, Monitor *m)
 	attachbottom(c);
 	attachstack(c);
 	if (c->isfullscreen)
-		resizeclient(c, m->mx, m->my, m->mw, m->mh);
+		resizeclient(c, m->mx, m->my, m->mw, m->mh, 0);
 	focus(NULL);
 	arrange(NULL);
 }
