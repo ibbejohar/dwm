@@ -65,3 +65,7 @@ Restart dwm
 ### Fifteenth patch - Restoreafterrestart
 
 Restore state after restart dwm.
+
+### Sixteenth patch - Keychord
+
+Able to chain multiple keybining.
