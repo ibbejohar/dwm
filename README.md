@@ -77,3 +77,7 @@ Split status to two part. This is patched mave been modified by Claude to work f
 ### Eighteenth patch - Status2d
 
 Give colors and able to draw on status. Modifed with Claude to work with the current heavly patched dwm.
+
+### Ninteenth patch - Netclientliststacking
+
+Fix screensharing. Able to screenshare specific window instead of the entire screen
